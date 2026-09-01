@@ -1,0 +1,41 @@
+# depslib dependency file v1.0
+1662684318 source:c:\users\itteam\desktop\new folder\stress_testing\checker.cpp
+	<bits/stdc++.h>
+
+1666663780 source:c:\users\itteam\desktop\new folder\stress_testing\correct.cpp
+	<bits/stdc++.h>
+
+1666662895 source:c:\users\itteam\desktop\new folder\stress_testing\gen.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+
+1666663780 source:c:\users\itteam\desktop\new folder\stress_testing\my.cpp
+	<bits/stdc++.h>
+
+1675955989 source:c:\stress_testing\checker.cpp
+	<bits/stdc++.h>
+
+1678713731 source:c:\stress_testing\correct.cpp
+	<bits/stdc++.h>
+
+1678708841 source:c:\stress_testing\my.cpp
+	<bits/stdc++.h>
+
+1675519451 source:c:\stress_testing\gen.cpp
+	<bits/stdc++.h>
+	<ext/pb_ds/assoc_container.hpp>
+	<ext/pb_ds/tree_policy.hpp>
+
+1675930788 source:d:\code block\stress_testing\checker.cpp
+	<bits/stdc++.h>
+
+1776875578 source:d:\dducws\stress_testing\check.cpp
+	<bits/stdc++.h>
+
+1775202267 source:c:\users\admin\onedrive\desktop\stress_testing\check.cpp
+	<bits/stdc++.h>
+
+1776336491 source:d:\dducws\stress_testing\gen.cpp
+	<bits/stdc++.h>
+
