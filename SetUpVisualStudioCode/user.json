@@ -1,0 +1,27 @@
+{
+    "workbench.iconTheme": "material-icon-theme",
+"editor.fontFamily": "Cascadia Code",
+"editor.fontLigatures": "'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'zero', 'onum'",
+"editor.fontSize": 14,
+// "editor.fontWeight": "370",
+"editor.lineHeight": 1.5,
+"editor.linkedEditing": true,
+"terminal.integrated.fontWeight": "370",
+"terminal.integrated.lineHeight": 1.1,
+"terminal.integrated.letterSpacing": 1,
+"terminal.integrated.fontWeightBold": "600",
+"code-runner.runInTerminal": true,
+"code-runner.executorMap": {
+    "cpp": "cd $dir && g++ $fileName -o $fileNameWithoutExt && .\\$fileNameWithoutExt.exe"
+},
+"explorer.confirmDelete": false,
+"editor.smoothScrolling": true,
+"workbench.list.smoothScrolling": true,
+"terminal.integrated.smoothScrolling": true,
+"terminal.integrated.enableMultiLinePasteWarning": "never",
+"security.workspace.trust.untrustedFiles": "open",
+"workbench.startupEditor": "none",
+"editor.cursorSmoothCaretAnimation": "on",
+"update.mode": "none",
+"workbench.colorTheme": "Dracula Theme"
+}
