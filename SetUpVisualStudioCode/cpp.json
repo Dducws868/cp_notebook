@@ -86,7 +86,7 @@
 			"\tcin.tie(nullptr)->sync_with_stdio(false);",
 			"\tcout << fixed << setprecision(12);",
 			"\tif (fopen(\"in.inp\", \"r\")) setIn(\"in.inp\");",
-			"\tif (sz(s)) setIn(s + \".inp\"), setOut(s + \".out\");",
+			"\tif (fopen((s + \".inp\").c_str(), \"r\")) setIn(s + \".inp\"), setOut(s + \".out\");",
 			"}",
 			"}  // namespace FILEIO",
 			"",
