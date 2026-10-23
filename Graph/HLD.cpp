@@ -1,153 +1,201 @@
-#include <iostream>
-#include <vector>
-#include <algorithm>
-
+#include <bits/stdc++.h>
 using namespace std;
 
-const int MAXN = 100005;
+// --- LAZY SEGMENT TREE ---
+// Quản lý mảng 1 chiều với các truy vấn Range Add và Range Sum
+struct LazySegTree {
+    int n;
+    vector<long long> st, lazy;
 
-// ================= SEGMENT TREE =================
-// Cây Segment Tree dùng để quản lý mảng 1 chiều sau khi đã trải phẳng cây
-long long st[4 * MAXN];
-long long arr[MAXN]; // Mảng lưu giá trị của các đỉnh (theo chỉ số HLD)
-
-void build(int id, int l, int r) {
-    if (l == r) {
-        st[id] = arr[l];
-        return;
+    LazySegTree(int _n) {
+        n = _n;
+        st.assign(4 * n, 0);
+        lazy.assign(4 * n, 0);
     }
-    int mid = (l + r) / 2;
-    build(2 * id, l, mid);
-    build(2 * id + 1, mid + 1, r);
-    st[id] = st[2 * id] + st[2 * id + 1]; // Phép toán kết hợp (ví dụ: Tổng)
-}
 
-void update_st(int id, int l, int r, int pos, long long val) {
-    if (l == r) {
-        st[id] = val; // Cập nhật gán (hoặc st[id] += val nếu cộng thêm)
-        return;
+    void push(int id, int l, int r) {
+        if (lazy[id] != 0) {
+            int mid = l + (r - l) / 2;
+            st[id * 2] += lazy[id] * (mid - l + 1);
+            lazy[id * 2] += lazy[id];
+            
+            st[id * 2 + 1] += lazy[id] * (r - mid);
+            lazy[id * 2 + 1] += lazy[id];
+            
+            lazy[id] = 0;
+        }
     }
-    int mid = (l + r) / 2;
-    if (pos <= mid) update_st(2 * id, l, mid, pos, val);
-    else update_st(2 * id + 1, mid + 1, r, pos, val);
-    st[id] = st[2 * id] + st[2 * id + 1];
-}
 
-long long query_st(int id, int l, int r, int u, int v) {
-    if (v < l || r < u) return 0; // Giá trị trung lập của phép toán
-    if (u <= l && r <= v) return st[id];
-    int mid = (l + r) / 2;
-    return query_st(2 * id, l, mid, u, v) + query_st(2 * id + 1, mid + 1, r, u, v);
-}
+    void update(int id, int l, int r, int ql, int qr, long long val) {
+        if (ql > r || qr < l) return;
+        if (ql <= l && r <= qr) {
+            st[id] += val * (r - l + 1);
+            lazy[id] += val;
+            return;
+        }
+        push(id, l, r);
+        int mid = l + (r - l) / 2;
+        update(id * 2, l, mid, ql, qr, val);
+        update(id * 2 + 1, mid + 1, r, ql, qr, val);
+        st[id] = st[id * 2] + st[id * 2 + 1];
+    }
 
-// ================= HLD =================
-int n;
-vector<int> adj[MAXN];
-long long node_val[MAXN]; // Giá trị ban đầu của các đỉnh
+    long long query(int id, int l, int r, int ql, int qr) {
+        if (ql > r || qr < l) return 0;
+        if (ql <= l && r <= qr) return st[id];
+        push(id, l, r);
+        int mid = l + (r - l) / 2;
+        return query(id * 2, l, mid, ql, qr) + query(id * 2 + 1, mid + 1, r, ql, qr);
+    }
+};
 
-// Các mảng phục vụ HLD
-int parent_node[MAXN], depth[MAXN], sz[MAXN];
-int heavy[MAXN]; // heavy[u] = con nặng của u
-int head[MAXN];  // head[u] = đỉnh đầu tiên của chuỗi nặng chứa u
-int pos[MAXN];   // pos[u] = vị trí của u trên mảng 1 chiều của Segment Tree
-int timer = 0;
+// --- HEAVY-LIGHT DECOMPOSITION ---
+class HLD {
+private:
+    int n;
+    vector<vector<int>> adj;
+    vector<int> sz, head, parent, depth, in, out;
+    int timer;
 
-// DFS 1: Tính kích thước cây con, độ sâu, cha, và tìm con nặng
-void dfs_sz(int v, int p) {
-    sz[v] = 1;
-    parent_node[v] = p;
-    depth[v] = depth[p] + 1;
-    heavy[v] = -1;
-    int max_sub = 0;
-
-    for (int u : adj[v]) {
-        if (u != p) {
-            dfs_sz(u, v);
-            sz[v] += sz[u];
-            if (sz[u] > max_sub) {
-                max_sub = sz[u];
-                heavy[v] = u; // Lưu lại con nặng nhất
+    void dfs_sz(int u, int p) {
+        sz[u] = 1;
+        parent[u] = p;
+        for (auto &v : adj[u]) {
+            if (v != p) {
+                depth[v] = depth[u] + 1;
+                dfs_sz(v, u);
+                sz[u] += sz[v];
+                if (sz[v] > sz[adj[u][0]] || adj[u][0] == p) {
+                    swap(v, adj[u][0]);
+                }
             }
         }
     }
-}
 
-// DFS 2: Tạo các chuỗi (chains) và trải phẳng cây ra mảng 1 chiều
-void dfs_hld(int v, int p, int h) {
-    head[v] = h;
-    pos[v] = ++timer;
-    arr[pos[v]] = node_val[v]; // Lưu giá trị đỉnh vào mảng của Segment tree
-
-    // Ưu tiên duyệt con nặng trước để chúng nằm liên tiếp nhau trên Segment Tree
-    if (heavy[v] != -1) {
-        dfs_hld(heavy[v], v, h);
-    }
-
-    // Duyệt các con nhẹ
-    for (int u : adj[v]) {
-        if (u != p && u != heavy[v]) {
-            dfs_hld(u, v, u); // Con nhẹ sẽ bắt đầu một chuỗi (chain) mới
+    void dfs_hld(int u, int p, int h) {
+        head[u] = h;
+        in[u] = ++timer;
+        for (int v : adj[u]) {
+            if (v != p) {
+                dfs_hld(v, u, (v == adj[u][0] ? h : v));
+            }
         }
+        out[u] = timer;
     }
-}
 
-// ================= TRUY VẤN VÀ CẬP NHẬT =================
-
-// Cập nhật giá trị tại đỉnh u thành val
-void update_node(int u, long long val) {
-    update_st(1, 1, n, pos[u], val);
-}
-
-// Truy vấn tổng trên đường đi từ u đến v
-long long query_path(int u, int v) {
-    long long res = 0;
-    // Lặp cho đến khi u và v nằm trên cùng một chuỗi
-    while (head[u] != head[v]) {
-        if (depth[head[u]] < depth[head[v]]) {
-            swap(u, v);
-        }
-        // Truy vấn đoạn từ đỉnh đầu chuỗi (head[u]) đến u
-        res += query_st(1, 1, n, pos[head[u]], pos[u]);
-        // Nhảy lên cha của đỉnh đầu chuỗi
-        u = parent_node[head[u]];
+public:
+    HLD(int _n) : n(_n), adj(_n), sz(_n), head(_n), parent(_n), depth(_n), in(_n), out(_n) {
+        timer = -1;
     }
-    
-    // Khi u và v đã nằm trên cùng một chuỗi
-    if (depth[u] > depth[v]) {
-        swap(u, v);
-    }
-    // LƯU Ý: Nếu trọng số nằm trên CẠNH (edges) thay vì ĐỈNH,
-    // đoạn này phải cộng thêm 1 vào pos[u], tức là: query_st(..., pos[u] + 1, pos[v])
-    res += query_st(1, 1, n, pos[u], pos[v]);
-    
-    return res;
-}
 
-int main() {
-    // Tối ưu I/O
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-
-    // Ví dụ đọc dữ liệu
-    /*
-    cin >> n;
-    for (int i = 1; i <= n; i++) cin >> node_val[i];
-    
-    for (int i = 1; i < n; i++) {
-        int u, v; cin >> u >> v;
+    void add_edge(int u, int v) {
         adj[u].push_back(v);
         adj[v].push_back(u);
     }
 
-    // Khởi tạo HLD
-    depth[0] = 0;
-    dfs_sz(1, 0);       // Bắt đầu từ gốc 1
-    dfs_hld(1, 0, 1);   // Gốc của chuỗi đầu tiên là 1
-    build(1, 1, n);     // Xây dựng Segment Tree
+    void build(int root = 0) {
+        depth[root] = 0;
+        dfs_sz(root, -1);
+        dfs_hld(root, -1, root);
+    }
+
+    // Trả về các đoạn [L, R] trên mảng 1 chiều
+    vector<pair<int, int>> getPathIntervals(int u, int v, bool is_edge_query = false) {
+        vector<pair<int, int>> res;
+        while (head[u] != head[v]) {
+            if (depth[head[u]] < depth[head[v]]) swap(u, v);
+            res.push_back({in[head[u]], in[u]});
+            u = parent[head[u]];
+        }
+        if (depth[u] > depth[v]) swap(u, v);
+        
+        if (is_edge_query) {
+            if (u != v) res.push_back({in[u] + 1, in[v]});
+        } else {
+            res.push_back({in[u], in[v]});
+        }
+        return res;
+    }
+
+    pair<int, int> getSubtreeInterval(int u) {
+        return {in[u], out[u]};
+    }
+};
+
+// --- WRAPPER: TÍCH HỢP HLD + SEGMENT TREE ---
+struct TreeProcessor {
+    int n;
+    HLD hld;
+    LazySegTree st;
+
+    TreeProcessor(int _n) : n(_n), hld(_n), st(_n) {}
+
+    void add_edge(int u, int v) {
+        hld.add_edge(u, v);
+    }
+
+    void build(int root = 0) {
+        hld.build(root);
+    }
+
+    // Cập nhật cộng val vào các đỉnh trên đường đi từ u đến v
+    void updatePath(int u, int v, long long val) {
+        auto intervals = hld.getPathIntervals(u, v);
+        for (auto [l, r] : intervals) {
+            st.update(1, 0, n - 1, l, r, val);
+        }
+    }
+
+    // Truy vấn tổng các đỉnh trên đường đi từ u đến v
+    long long queryPath(int u, int v) {
+        long long res = 0;
+        auto intervals = hld.getPathIntervals(u, v);
+        for (auto [l, r] : intervals) {
+            res += st.query(1, 0, n - 1, l, r);
+        }
+        return res;
+    }
+
+    // Cập nhật toàn bộ cây con gốc u
+    void updateSubtree(int u, long long val) {
+        auto [l, r] = hld.getSubtreeInterval(u);
+        st.update(1, 0, n - 1, l, r, val);
+    }
+
+    // Truy vấn tổng toàn bộ cây con gốc u
+    long long querySubtree(int u) {
+        auto [l, r] = hld.getSubtreeInterval(u);
+        return st.query(1, 0, n - 1, l, r);
+    }
+};
+
+// --- VÍ DỤ SỬ DỤNG ---
+int main() {
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int n = 5;
+    TreeProcessor tp(n);
     
-    // Truy vấn
-    cout << query_path(u, v) << "\n";
-    */
-    
+    // Xây dựng cây (0-indexed)
+    tp.add_edge(0, 1);
+    tp.add_edge(0, 2);
+    tp.add_edge(1, 3);
+    tp.add_edge(1, 4);
+
+    tp.build(0); // Khởi tạo HLD lấy đỉnh 0 làm gốc
+
+    // 1. Cộng 10 vào các đỉnh trên đường đi từ 3 đến 2
+    tp.updatePath(3, 2, 10);
+
+    // 2. Truy vấn tổng trên đường đi từ 4 đến 0
+    cout << "Tong (4 -> 0): " << tp.queryPath(4, 0) << "\n"; // Sẽ bằng 10 (vì đỉnh 0, 1 nằm trên đường đi 3->2)
+
+    // 3. Cộng 5 vào toàn bộ cây con gốc 1
+    tp.updateSubtree(1, 5);
+
+    // 4. Truy vấn lại cây con gốc 1
+    cout << "Tong subtree(1): " << tp.querySubtree(1) << "\n";
+
     return 0;
 }
