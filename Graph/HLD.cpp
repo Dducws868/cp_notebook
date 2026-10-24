@@ -1,16 +1,15 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// --- LAZY SEGMENT TREE ---
-// Quản lý mảng 1 chiều với các truy vấn Range Add và Range Sum
+// --- LAZY SEGMENT TREE (1-Indexed) ---
 struct LazySegTree {
     int n;
     vector<long long> st, lazy;
 
     LazySegTree(int _n) {
         n = _n;
-        st.assign(4 * n, 0);
-        lazy.assign(4 * n, 0);
+        st.assign(4 * n + 4, 0); // Mở rộng thêm an toàn cho 1-indexed
+        lazy.assign(4 * n + 4, 0);
     }
 
     void push(int id, int l, int r) {
@@ -49,7 +48,7 @@ struct LazySegTree {
     }
 };
 
-// --- HEAVY-LIGHT DECOMPOSITION ---
+// --- HEAVY-LIGHT DECOMPOSITION (1-Indexed) ---
 class HLD {
 private:
     int n;
@@ -74,7 +73,7 @@ private:
 
     void dfs_hld(int u, int p, int h) {
         head[u] = h;
-        in[u] = ++timer;
+        in[u] = ++timer; // in[u] sẽ chạy từ 1 đến N
         for (int v : adj[u]) {
             if (v != p) {
                 dfs_hld(v, u, (v == adj[u][0] ? h : v));
@@ -84,8 +83,9 @@ private:
     }
 
 public:
-    HLD(int _n) : n(_n), adj(_n), sz(_n), head(_n), parent(_n), depth(_n), in(_n), out(_n) {
-        timer = -1;
+    // Cấp phát kích thước N + 1 để dùng chỉ số 1..N
+    HLD(int _n) : n(_n), adj(_n + 1), sz(_n + 1), head(_n + 1), parent(_n + 1), depth(_n + 1), in(_n + 1), out(_n + 1) {
+        timer = 0; // Bắt đầu từ 0 để ++timer ra 1
     }
 
     void add_edge(int u, int v) {
@@ -93,13 +93,12 @@ public:
         adj[v].push_back(u);
     }
 
-    void build(int root = 0) {
+    void build(int root = 1) { // Gốc mặc định là 1
         depth[root] = 0;
-        dfs_sz(root, -1);
-        dfs_hld(root, -1, root);
+        dfs_sz(root, 0); // Nút 0 đóng vai trò là cha ảo của gốc
+        dfs_hld(root, 0, root);
     }
 
-    // Trả về các đoạn [L, R] trên mảng 1 chiều
     vector<pair<int, int>> getPathIntervals(int u, int v, bool is_edge_query = false) {
         vector<pair<int, int>> res;
         while (head[u] != head[v]) {
@@ -122,7 +121,7 @@ public:
     }
 };
 
-// --- WRAPPER: TÍCH HỢP HLD + SEGMENT TREE ---
+// --- WRAPPER (1-Indexed) ---
 struct TreeProcessor {
     int n;
     HLD hld;
@@ -134,38 +133,34 @@ struct TreeProcessor {
         hld.add_edge(u, v);
     }
 
-    void build(int root = 0) {
+    void build(int root = 1) {
         hld.build(root);
     }
 
-    // Cập nhật cộng val vào các đỉnh trên đường đi từ u đến v
     void updatePath(int u, int v, long long val) {
         auto intervals = hld.getPathIntervals(u, v);
         for (auto [l, r] : intervals) {
-            st.update(1, 0, n - 1, l, r, val);
+            st.update(1, 1, n, l, r, val); // Cập nhật từ 1 đến N
         }
     }
 
-    // Truy vấn tổng các đỉnh trên đường đi từ u đến v
     long long queryPath(int u, int v) {
         long long res = 0;
         auto intervals = hld.getPathIntervals(u, v);
         for (auto [l, r] : intervals) {
-            res += st.query(1, 0, n - 1, l, r);
+            res += st.query(1, 1, n, l, r); // Truy vấn từ 1 đến N
         }
         return res;
     }
 
-    // Cập nhật toàn bộ cây con gốc u
     void updateSubtree(int u, long long val) {
         auto [l, r] = hld.getSubtreeInterval(u);
-        st.update(1, 0, n - 1, l, r, val);
+        st.update(1, 1, n, l, r, val);
     }
 
-    // Truy vấn tổng toàn bộ cây con gốc u
     long long querySubtree(int u) {
         auto [l, r] = hld.getSubtreeInterval(u);
-        return st.query(1, 0, n - 1, l, r);
+        return st.query(1, 1, n, l, r);
     }
 };
 
@@ -177,25 +172,20 @@ int main() {
     int n = 5;
     TreeProcessor tp(n);
     
-    // Xây dựng cây (0-indexed)
-    tp.add_edge(0, 1);
-    tp.add_edge(0, 2);
+    // Xây dựng cây (1-indexed)
+    tp.add_edge(1, 2);
     tp.add_edge(1, 3);
-    tp.add_edge(1, 4);
+    tp.add_edge(2, 4);
+    tp.add_edge(2, 5);
 
-    tp.build(0); // Khởi tạo HLD lấy đỉnh 0 làm gốc
+    tp.build(1); // Khởi tạo HLD lấy đỉnh 1 làm gốc
 
-    // 1. Cộng 10 vào các đỉnh trên đường đi từ 3 đến 2
-    tp.updatePath(3, 2, 10);
+    // 1. Cộng 10 vào các đỉnh trên đường đi từ 4 đến 3
+    tp.updatePath(4, 3, 10);
 
-    // 2. Truy vấn tổng trên đường đi từ 4 đến 0
-    cout << "Tong (4 -> 0): " << tp.queryPath(4, 0) << "\n"; // Sẽ bằng 10 (vì đỉnh 0, 1 nằm trên đường đi 3->2)
-
-    // 3. Cộng 5 vào toàn bộ cây con gốc 1
-    tp.updateSubtree(1, 5);
-
-    // 4. Truy vấn lại cây con gốc 1
-    cout << "Tong subtree(1): " << tp.querySubtree(1) << "\n";
+    // 2. Truy vấn tổng trên đường đi từ 5 đến 1
+    // (Đường đi 5 -> 2 -> 1, trong đó 2 và 1 đã được cộng 10 từ bước trước)
+    cout << "Tong (5 -> 1): " << tp.queryPath(5, 1) << "\n"; // Kết quả là 20
 
     return 0;
 }
