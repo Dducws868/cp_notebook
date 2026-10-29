@@ -1,5 +1,4 @@
-const int MAX = 1e5 + 10;
-int par[MAX][20], h[MAX];
+int par[MAX][LOG], h[MAX];
 
 void dfs(int u, int p = -1) {
     for (int v : adj[u]) if (v != p) {
@@ -16,7 +15,7 @@ int lca(int u, int v) {
         if (h[u] < h[v]) swap(u, v);
         int k = h[u] - h[v];
         for (int j = 0; 1 << j <= k; j++)
-            if (bit(j, k)) u = par[u][j];
+            if (bt(k, j)) u = par[u][j];
     }
     if (u == v) return u;
     int k = __lg(h[u]);
