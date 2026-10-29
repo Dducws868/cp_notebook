@@ -1,48 +1,47 @@
-struct DSU {
-    vector<int> parent, sz;
+struct DSURollBack {
+    vector<int> par, sz;
     int components;
-    //history
-    struct State {
-        int u, v, sz_v;
-    };
-    vector<State> history;
+    vector<pair<int, int>> history;
 
-    DSU(int n) {
-        parent.resize(n + 1);
+    DSU_Rollback(int n) {
+        par.resize(n + 1);
         sz.assign(n + 1, 1);
-        for (int i = 1; i <= n; ++i) parent[i] = i;
+        iota(par.begin(), par.end(), 0);
         components = n;
     }
 
-    int find(int i) {
-        while (i != parent[i]) {
-            i = parent[i];
-        }
-        return i;
+    int find_set(int u) {
+        while (u != par[u]) u = par[u];
+        return u;
     }
 
     bool unite(int u, int v) {
-        u = find(u);
-        v = find(v);
+        u = find_set(u);
+        v = find_set(v);
         if (u == v) return false;
 
         if (sz[u] > sz[v]) swap(u, v);
-        history.push_back({u, v, sz[v]});
-
-        parent[u] = v;
+        
+        history.push_back({u, v});
+        par[u] = v;
         sz[v] += sz[u];
         components--;
         return true;
     }
 
-    void rollback(int checkpoint) {
-        while (history.size() > checkpoint) {
-            State s = history.back();
+    int get_state() {
+        return history.size();
+    }
+
+    void rollback(int state) {
+        while (history.size() > state) {
+            int u = history.back().first;
+            int v = history.back().second;
             history.pop_back();
 
-            parent[s.u] = s.u; //roll back par
-            sz[s.v] = s.sz_v;
-            ++components;    //++components
+            sz[v] -= sz[u];
+            par[u] = u;
+            components++;
         }
     }
 };
