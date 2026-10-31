@@ -1,7 +1,3 @@
-#include <vector>
-
-using namespace std;
-
 class CentroidTree {
 private:
     int n;
