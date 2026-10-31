@@ -79,7 +79,7 @@ struct QueryTree {
         add_edge_to_tree(1, 1, T, l, r, u, v);
     }
 
-    void dfs(int node, int l, int r, RollbackDSU& dsu) {
+    void dfs(int node, int l, int r, DSURollBack& dsu) {
         for (auto& edge : tree[node]) {
             dsu.unite(edge.first, edge.second);
         }
@@ -97,7 +97,7 @@ struct QueryTree {
         }
     }
 
-    void solve(RollbackDSU& dsu) {
+    void solve(DSURollBack& dsu) {
         if (T > 0) dfs(1, 1, T, dsu);
     }
 };
