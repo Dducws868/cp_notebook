@@ -87,3 +87,16 @@ public:
     }
 };
 
+void main() {
+    PersistentSegTree pst(n, q);
+    vector<int> root(q + 1);
+    
+    root[0] = pst.build(a); // Phiên bản 0
+    
+    // Cập nhật lần thứ i dựa trên phiên bản trước (hoặc phiên bản k bất kỳ)
+    root[1] = pst.add(root[0], pos, delta);
+    root[2] = pst.set(root[1], pos, new_val);
+    
+    // Truy vấn tổng đoạn [l, r] ở phiên bản 1
+    long long ans = pst.query(root[1], l, r);
+}
