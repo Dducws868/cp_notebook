@@ -1,6 +1,3 @@
-#include <bits/stdc++.h>
-using namespace std;
-
 // --- LAZY SEGMENT TREE (1-Indexed) ---
 struct LazySegTree {
     int n;
