@@ -90,9 +90,9 @@ const ll INF = (ll)1e18;
 const db PI = acos((db)-1);
 mt19937 rng((uint32_t)chrono::steady_clock::now().time_since_epoch().count());
 
-/** READ THE STUFF! ALL OF IT! **/
+/** REMEMBER THE STUFF! ALL OF IT! **/
 
-/** READ THE STUFF AGAIN! **/
+/** READ THE STUFF! **/
 
 int main() {
     setIO();
@@ -100,10 +100,10 @@ int main() {
 
     return 0;
 }
-/** STUFF YOU SHOULD LOOK FOR
- * int overflow, array bounds
- * special cases (n=1?)
- * do smth instead of nothing and stay organized
- * WRITE STUFF DOWN
- * DON'T GET STUCK ON ONE APPROACH
- **/
+/* STUFF YOU SHOULD LOOK FOR:
+ * int overflow, array bounds, checking logic carefully
+ * special cases?
+ * don't get stuck on one approach, switch case until it's obvious
+ * remember, observation, property, structure of solution
+ * do sth instead of nothing or stay organised
+*/
