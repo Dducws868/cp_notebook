@@ -92,7 +92,7 @@ const ll INF = (ll)1e18;
 const db PI = acos((db)-1);
 mt19937 rng((uint32_t)chrono::steady_clock::now().time_since_epoch().count());
 
-/** READ THE STUFF! **/
+/** READ THE STUFF! ALL OF IT! **/
 
 int main() {
     setIO();
