@@ -10,14 +10,11 @@ private:
         sz[u] = 1;
         parent[u] = p;
         for (auto &v : adj[u]) {
-            if (v != p) {
-                depth[v] = depth[u] + 1;
-                dfs_sz(v, u);
-                sz[u] += sz[v];
-                if (sz[v] > sz[adj[u][0]] || adj[u][0] == p) {
-                    swap(v, adj[u][0]);
-                }
-            }
+            if (v == p) continue;
+            depth[v] = depth[u] + 1;
+            dfs_sz(v, u);
+            sz[u] += sz[v];
+            if (sz[v] > sz[adj[u][0]] || adj[u][0] == p) swap(v, adj[u][0]);
         }
     }
 
@@ -25,9 +22,8 @@ private:
         head[u] = h;
         in[u] = ++timer; // in[u] sẽ chạy từ 1 đến N
         for (int v : adj[u]) {
-            if (v != p) {
-                dfs_hld(v, u, (v == adj[u][0] ? h : v));
-            }
+            if (v == p) continue;
+            dfs_hld(v, u, (v == adj[u][0] ? h : v));
         }
         out[u] = timer;
     }
@@ -58,11 +54,8 @@ public:
         }
         if (depth[u] > depth[v]) swap(u, v);
         
-        if (is_edge_query) {
-            if (u != v) res.push_back({in[u] + 1, in[v]});
-        } else {
-            res.push_back({in[u], in[v]});
-        }
+        if (is_edge_query) if (u != v) res.push_back({in[u] + 1, in[v]});
+        else res.push_back({in[u], in[v]});
         return res;
     }
 
