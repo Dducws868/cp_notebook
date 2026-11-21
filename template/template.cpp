@@ -16,7 +16,6 @@ using pd = pair<db, db>;
 #define tcT template <class T
 #define tcTU tcT, class U
 // ^ lol this makes everything look weird but I'll try it
-tcT, size_t SZ > using AR = array<T, SZ>;
 tcT > using V = vector<T>;
 using vi = V<int>;
 using vb = V<bool>;
@@ -33,7 +32,6 @@ using vpd = V<pd>;
 #define all(x) bg(x), end(x)
 #define rall(x) rbegin(x), rend(x)
 #define sor(x) sort(all(x))
-#define rsz resize
 #define ins insert
 #define pb push_back
 #define eb emplace_back
@@ -42,9 +40,10 @@ using vpd = V<pd>;
 
 // loops
 #define FOR(i, a, b) for (int i = (a); i <= (b); ++i)
-#define F0R(i, a) FOR(i, 0, a - 1)
+#define REP(i, a) FOR(i, 0, a - 1)
 #define FORD(i, a, b) for (int i = (a); i >= (b); --i)
-#define rep(a) F0R(_, a)
+#define PER(i, a) FORD(i, a - 1, 0)
+#define rep(a) REP(_, a)
 #define each(a, x) for (auto &a : x)
 
 constexpr int pct(int x) { return __builtin_popcount(x); }  // # of bits set
@@ -82,7 +81,7 @@ void setIO(str s = "") {
     cin.tie(nullptr)->sync_with_stdio(false);
     cout << fixed << setprecision(12);
     if (fopen("in.inp", "r")) setIn("in.inp");
-    if (sz(s)) setIn(s + ".inp"), setOut(s + ".out");
+    if (fopen((s + ".inp").c_str(), "r")) setIn(s + ".inp"), setOut(s + ".out");
 }
 }  // namespace FILEIO
 
@@ -93,17 +92,18 @@ const ll INF = (ll)1e18;
 const db PI = acos((db)-1);
 mt19937 rng((uint32_t)chrono::steady_clock::now().time_since_epoch().count());
 
+/** READ THE STUFF! **/
 
 int main() {
     setIO();
-
-
+    
+    
     return 0;
 }
-/* STUFF YOU SHOULD LOOK FOR
- * int overflow, array bounds
- * special cases (n=1?)
- * do smth instead of nothing and stay organized
- * WRITE STUFF DOWN
- * DON'T GET STUCK ON ONE APPROACH
- */
+/*
+ * STUFF YOU SHOULD LOOK FOR:
+ * int overflow, array bounds, checking logic carefully
+ * don't get stuck on one approach, switch case until it's obvious
+ * remember, observation, property, structure of solution
+ * do sth instead of nothing of stay organised
+*/
