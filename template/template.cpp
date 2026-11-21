@@ -28,15 +28,12 @@ using vpd = V<pd>;
 
 // vectors
 #define sz(x) int(size(x))
-#define bg(x) begin(x)
-#define all(x) bg(x), end(x)
+#define all(x) begin(x), end(x)
 #define rall(x) rbegin(x), rend(x)
 #define sor(x) sort(all(x))
 #define ins insert
 #define pb push_back
 #define eb emplace_back
-#define ft front()
-#define bk back()
 
 // loops
 #define FOR(i, a, b) for (int i = (a); i <= (b); ++i)
@@ -46,6 +43,7 @@ using vpd = V<pd>;
 #define rep(a) REP(_, a)
 #define each(a, x) for (auto &a : x)
 
+// bitwise
 constexpr int pct(int x) { return __builtin_popcount(x); }  // # of bits set
 constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }  // floor(log2(x))
 constexpr bool bt(int x, int i) { return ((x >> i) & 1); }
@@ -63,8 +61,8 @@ inline namespace DEBUG {
 #ifdef LOCAL
 #include "D:\template.cpp"
 #else
-#define debug(...)
-#define debugArr(...)
+#define dbg(...)
+#define dbgn(...)
 #endif
 
 const auto beg_time = std::chrono::high_resolution_clock::now();
@@ -94,16 +92,18 @@ mt19937 rng((uint32_t)chrono::steady_clock::now().time_since_epoch().count());
 
 /** READ THE STUFF! ALL OF IT! **/
 
+/** READ THE STUFF AGAIN! **/
+
 int main() {
     setIO();
-    
-    
+
+
     return 0;
 }
-/*
- * STUFF YOU SHOULD LOOK FOR:
- * int overflow, array bounds, checking logic carefully
- * don't get stuck on one approach, switch case until it's obvious
- * remember, observation, property, structure of solution
- * do sth instead of nothing of stay organised
-*/
+/** STUFF YOU SHOULD LOOK FOR
+ * int overflow, array bounds
+ * special cases (n=1?)
+ * do smth instead of nothing and stay organized
+ * WRITE STUFF DOWN
+ * DON'T GET STUCK ON ONE APPROACH
+ **/
