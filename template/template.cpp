@@ -64,7 +64,6 @@ inline namespace DEBUG {
 #define dbg(...)
 #define dbgn(...)
 #endif
-
 const auto beg_time = std::chrono::high_resolution_clock::now();
 // https://stackoverflow.com/questions/47980498/accurate-c-c-clock-on-a-multi-core-processor-with-auto-overclock?noredirect=1&lq=1
 void timeElapsed() {
@@ -92,6 +91,7 @@ mt19937 rng((uint32_t)chrono::steady_clock::now().time_since_epoch().count());
 
 /** REMEMBER THE STUFF! ALL OF IT! **/
 
+
 /** READ THE STUFF! **/
 
 int main() {
@@ -101,9 +101,9 @@ int main() {
     return 0;
 }
 /* STUFF YOU SHOULD LOOK FOR:
+ * remember, observation, property, structure of solution
+ * don't get stuck on one approach, switch case until it's obvious
+ * do sth instead of nothing or stay organised
  * int overflow, array bounds, checking logic carefully
  * special cases?
- * don't get stuck on one approach, switch case until it's obvious
- * remember, observation, property, structure of solution
- * do sth instead of nothing or stay organised
-*/
+ */
