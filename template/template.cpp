@@ -43,7 +43,6 @@ using vpd = V<pd>;
 #define rep(a) REP(_, a)
 #define each(a, x) for (auto &a : x)
 
-// bitwise
 constexpr int pct(int x) { return __builtin_popcount(x); }  // # of bits set
 constexpr int bits(int x) { return x == 0 ? 0 : 31 - __builtin_clz(x); }  // floor(log2(x))
 constexpr bool bt(int x, int i) { return ((x >> i) & 1); }
@@ -64,6 +63,7 @@ inline namespace DEBUG {
 #define dbg(...)
 #define dbgn(...)
 #endif
+
 const auto beg_time = std::chrono::high_resolution_clock::now();
 // https://stackoverflow.com/questions/47980498/accurate-c-c-clock-on-a-multi-core-processor-with-auto-overclock?noredirect=1&lq=1
 void timeElapsed() {
