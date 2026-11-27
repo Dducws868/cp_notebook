@@ -6,6 +6,7 @@ Structure of solution, how build solution
 READ THE STUFF, CHECKING LOGIC CAREFULLY
 
 Need to learn:
+Li Chao Tree
 Dynamic Connected Graph, DSU Roll Back
 Divide and Conquer
 Mo
